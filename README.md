@@ -134,7 +134,7 @@ TownOfNDev uses semantic-style versioning during development.
 Current release:
 
 ```text
-v0.1.0-beta.1
+v0.1.0-beta.1.0.1
 ```
 
 Future beta builds will increment the beta suffix as fixes and improvements are made.
@@ -142,7 +142,7 @@ Future beta builds will increment the beta suffix as fixes and improvements are 
 Examples:
 
 ```text
-v0.1.0-beta.1.0.1
+v0.1.0-beta.1.0.2
 v0.1.0-beta.1.1.0
 v0.1.0-beta.2.0.0
 ```
