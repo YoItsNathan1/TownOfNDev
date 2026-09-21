@@ -13,6 +13,9 @@ using MiraAPI.Utilities.Assets;
 using Reactor.Utilities.Extensions;
 using TMPro;
 using TownOfNDev.Assets;
+using TownOfNDev.Modifiers.Crewmate;
+using TownOfNDev.Modifiers.Impostor;
+using TownOfNDev.Modifiers.Universal;
 using TownOfNDev.Options;
 using UnityEngine;
 using UnityEngine.Events;
@@ -351,31 +354,38 @@ public static class ModifierSettingsRoleStylePatch
         Bindings.Clear();
 
         AddBinding("EyeMask", "Eye Mask", "Crewmate", TownOfNDevColors.EyeMask,
-            TownOfNDevAssets.EyeMaskModifierIcon, OptionGroupSingleton<EyeMaskOptions>.Instance,
+            TownOfNDevAssets.EyeMaskModifierIcon, new EyeMaskModifier().GetDescription,
+            OptionGroupSingleton<EyeMaskOptions>.Instance,
             OptionGroupSingleton<EyeMaskOptions>.Instance.AssignmentChance);
 
         AddBinding("Menace", "Menace", "Impostor", TownOfNDevColors.Menace,
-            TownOfNDevAssets.MenaceModifierIcon, OptionGroupSingleton<MenaceOptions>.Instance,
+            TownOfNDevAssets.MenaceModifierIcon, new MenaceModifier().GetDescription,
+            OptionGroupSingleton<MenaceOptions>.Instance,
             OptionGroupSingleton<MenaceOptions>.Instance.AssignmentChance);
 
         AddBinding("Butterfingers", "Butterfingers", "Universal", TownOfNDevColors.Butterfingers,
-            TownOfNDevAssets.ButterfingersModifierIcon, OptionGroupSingleton<ButterfingersOptions>.Instance,
+            TownOfNDevAssets.ButterfingersModifierIcon, new ButterfingersModifier().GetDescription,
+            OptionGroupSingleton<ButterfingersOptions>.Instance,
             OptionGroupSingleton<ButterfingersOptions>.Instance.AssignmentChance);
 
         AddBinding("Laggy", "Laggy", "Universal", TownOfNDevColors.Laggy,
-            TownOfNDevAssets.LaggyModifierIcon, OptionGroupSingleton<LaggyOptions>.Instance,
+            TownOfNDevAssets.LaggyModifierIcon, new LaggyModifier().GetDescription,
+            OptionGroupSingleton<LaggyOptions>.Instance,
             OptionGroupSingleton<LaggyOptions>.Instance.AssignmentChance);
 
         AddBinding("Soulhandler", "Soulhandler", "Universal", TownOfNDevColors.Soulhandler,
-            TownOfNDevAssets.SoulhandlerModifierIcon, OptionGroupSingleton<SoulhandlerOptions>.Instance,
+            TownOfNDevAssets.SoulhandlerModifierIcon, new SoulhandlerModifier().GetDescription,
+            OptionGroupSingleton<SoulhandlerOptions>.Instance,
             OptionGroupSingleton<SoulhandlerOptions>.Instance.AssignmentChance);
 
         AddBinding("Miracle", "Miracle", "Universal", TownOfNDevColors.Miracle,
-            TownOfNDevAssets.MiracleModifierIcon, OptionGroupSingleton<MiracleOptions>.Instance,
+            TownOfNDevAssets.MiracleModifierIcon, new MiracleModifier().GetDescription,
+            OptionGroupSingleton<MiracleOptions>.Instance,
             OptionGroupSingleton<MiracleOptions>.Instance.AssignmentChance);
 
         AddBinding("Null", "Null", "Universal", TownOfNDevColors.Null,
-            TownOfNDevAssets.NullModifierIcon, OptionGroupSingleton<NullOptions>.Instance,
+            TownOfNDevAssets.NullModifierIcon, new NullModifier().GetDescription,
+            OptionGroupSingleton<NullOptions>.Instance,
             OptionGroupSingleton<NullOptions>.Instance.AssignmentChance);
     }
 
@@ -385,6 +395,7 @@ public static class ModifierSettingsRoleStylePatch
         string group,
         Color color,
         LoadableAsset<Sprite> icon,
+        Func<string> descriptionProvider,
         AbstractOptionGroup optionGroup,
         ModdedNumberOption chance)
     {
@@ -397,7 +408,8 @@ public static class ModifierSettingsRoleStylePatch
             return;
         }
 
-        Bindings.Add(new ModifierBinding(key, displayName, group, color, icon, optionGroup, amount, chance));
+        Bindings.Add(new ModifierBinding(
+            key, displayName, group, color, icon, descriptionProvider, optionGroup, amount, chance));
         GroupCollapsed.TryAdd(group, false);
     }
 
@@ -982,7 +994,7 @@ public static class ModifierSettingsRoleStylePatch
         roleMenu.roleTitleText.text = binding.DisplayName;
         roleMenu.roleHeaderSprite.color = binding.Color;
         roleMenu.roleHeaderText.color = binding.Color.FindAlternateColor();
-        roleMenu.roleDescriptionText.text = $"Configure {binding.DisplayName}.";
+        roleMenu.roleDescriptionText.text = binding.DescriptionProvider();
 
         var imgBg = roleMenu.AdvancedRolesSettings.transform.FindChild("Imagebackground");
         if (imgBg)
@@ -1121,6 +1133,7 @@ public static class ModifierSettingsRoleStylePatch
             string group,
             Color color,
             LoadableAsset<Sprite> icon,
+            Func<string> descriptionProvider,
             AbstractOptionGroup optionGroup,
             ModdedNumberOption amount,
             ModdedNumberOption chance)
@@ -1130,6 +1143,7 @@ public static class ModifierSettingsRoleStylePatch
             Group = group;
             Color = color;
             Icon = icon;
+            DescriptionProvider = descriptionProvider;
             OptionGroup = optionGroup;
             Amount = amount;
             Chance = chance;
@@ -1143,6 +1157,7 @@ public static class ModifierSettingsRoleStylePatch
         public string Group { get; }
         public Color Color { get; }
         public LoadableAsset<Sprite> Icon { get; }
+        public Func<string> DescriptionProvider { get; }
         public AbstractOptionGroup OptionGroup { get; }
         public ModdedNumberOption Amount { get; }
         public ModdedNumberOption Chance { get; }
