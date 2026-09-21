@@ -10,7 +10,7 @@ It expands Town of Us with a collection of custom roles and modifiers designed t
 
 ## Latest Version
 
-**TownOfNDev `v0.1.0-beta.1`**
+**TownOfNDev `v0.1.0-beta.1.0.1`**
 
 [Download the latest release](../../releases/latest)
 
@@ -142,9 +142,9 @@ Future beta builds will increment the beta suffix as fixes and improvements are 
 Examples:
 
 ```text
-v0.1.0-beta.2
-v0.1.0-beta.3
-v0.1.0-beta.4
+v0.1.0-beta.1.0.1
+v0.1.0-beta.1.1.0
+v0.1.0-beta.2.0.0
 ```
 
 The first stable release will move out of beta once testing is complete.
