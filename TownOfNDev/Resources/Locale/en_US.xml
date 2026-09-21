@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!-- Eye Mask -->
+  <string name="NDevModifierEyeMask">Eye Mask</string>
+  <string name="NDevModifierEyeMaskIntroBlurb">Tasks can make you unexpectedly fall asleep.</string>
+  <string name="NDevModifierEyeMaskTabDescription">After completing a task, you may fall asleep after a random delay. While asleep, you are blind, unable to move, and unable to interact.</string>
+  <string name="NDevModifierEyeMaskWikiDescription">Completing a task can make you unexpectedly drowsy. After a short, unpredictable delay, you fall asleep: your screen goes dark and you cannot move or interact until you wake up.</string>
+  <string name="NDevModifierEyeMaskAmount">Eye Mask Amount</string>
+  <string name="NDevModifierEyeMaskAssignmentChance">Eye Mask Assignment Chance</string>
+  <string name="NDevModifierEyeMaskTriggerChance">Sleep Chance After Task</string>
+  <string name="NDevModifierEyeMaskMinimumDelay">Minimum Sleep Delay</string>
+  <string name="NDevModifierEyeMaskMaximumDelay">Maximum Sleep Delay</string>
+  <string name="NDevModifierEyeMaskSleepDuration">Sleep Duration</string>
+
+  <!-- Butterfingers -->
+  <string name="NDevModifierButterfingers">Butterfingers</string>
+  <string name="NDevModifierButterfingersIntroBlurb">Sometimes you fumble an action.</string>
+  <string name="NDevModifierButterfingersTabDescription">Sometimes an action slips at the worst moment, briefly delaying what you were trying to do.</string>
+  <string name="NDevModifierButterfingersWikiDescription">Sometimes an action slips at the worst moment. When you fumble, the action is briefly delayed before it can go through, which can throw off your timing when you need it most.</string>
+  <string name="NDevModifierButterfingersAmount">Butterfingers Amount</string>
+  <string name="NDevModifierButterfingersAssignmentChance">Butterfingers Assignment Chance</string>
+  <string name="NDevModifierButterfingersFumbleChance">Fumble Chance</string>
+  <string name="NDevModifierButterfingersMinimumDelay">Minimum Fumble Delay</string>
+  <string name="NDevModifierButterfingersMaximumDelay">Maximum Fumble Delay</string>
+  <string name="NDevModifierButterfingersCooldown">Fumble Internal Cooldown</string>
+  <string name="NDevModifierButterfingersKills">Can Fumble Kills</string>
+  <string name="NDevModifierButterfingersAbilities">Can Fumble Abilities</string>
+  <string name="NDevModifierButterfingersReports">Can Fumble Reports</string>
+  <string name="NDevModifierButterfingersVents">Can Fumble Vents</string>
+  <string name="NDevModifierButterfingersUse">Can Fumble Use / Tasks</string>
+
+  <!-- Laggy -->
+  <string name="NDevModifierLaggy">Laggy</string>
+  <string name="NDevModifierLaggyIntroBlurb">Your movement occasionally stutters.</string>
+  <string name="NDevModifierLaggyTabDescription">Your movement occasionally stutters, briefly freezing you before you carry on.</string>
+  <string name="NDevModifierLaggyWikiDescription">Your movement occasionally stutters. Starting to move or making a sharp change of direction can briefly freeze you before movement resumes, making your character feel like it suddenly lagged.</string>
+  <string name="NDevModifierLaggyAmount">Laggy Amount</string>
+  <string name="NDevModifierLaggyAssignmentChance">Laggy Assignment Chance</string>
+  <string name="NDevModifierLaggyTriggerChance">Stutter Trigger Chance</string>
+  <string name="NDevModifierLaggyMinimumInterval">Minimum Stutter Check Interval</string>
+  <string name="NDevModifierLaggyMaximumInterval">Maximum Stutter Check Interval</string>
+  <string name="NDevModifierLaggyStutterDuration">Movement Stutter Duration</string>
+  <string name="NDevModifierLaggyAfterimage">Show Lag Afterimage</string>
+
+
+  <!-- Troll (TOU role integration keys) -->
+  <string name="TownOfUsMira.Role.Troll">Troll</string>
+  <string name="TownOfUsMira.Role.Troll.IntroBlurb">Make someone kill you.</string>
+  <string name="TownOfUsMira.Role.Troll.MedDescription">Convince another player to kill you and secure your personal win.</string>
+  <string name="TownOfUsMira.Role.Troll.TabDescription">Convince another player to kill you and secure your personal win. Being guessed, executed in a meeting, ejected, disconnected, or causing your own death does not count. A successful qualifying out-of-meeting kill from another player completes your objective.</string>
+  <string name="TownOfUsMira.Role.Troll.WikiDescription">Convince another player to kill you and secure your personal win. Being guessed, executed in a meeting, ejected, disconnected, or causing your own death does not count. A successful qualifying out-of-meeting kill from another player completes your objective.</string>
+
+  <!-- Fungi (TOU role integration keys) -->
+  <string name="TownOfUsMira.Role.Fungi">Fungi</string>
+  <string name="TownOfUsMira.Role.Fungi.IntroBlurb">Spread a hidden fungal infection through the crew.</string>
+  <string name="TownOfUsMira.Role.Fungi.MedDescription">Infect players at close range. Infected players silently spread the fungus through successful interactions.</string>
+  <string name="TownOfUsMira.Role.Fungi.TabDescription">Infect nearby players and let the fungus spread through successful player-to-player interactions. New infections begin hidden and become more visible after meetings. Fungi can recognize infected players and each other. Spread the infection far enough to complete your objective.</string>
+  <string name="TownOfUsMira.Role.Fungi.WikiDescription">Infect nearby players and let the fungus spread through successful interactions. New infections begin hidden and become more visible after meetings. Multiple Fungi work toward the same infection objective.</string>
+
+  <!-- Tracer (TOU role integration keys) -->
+  <string name="TownOfUsMira.Role.Tracer">Tracer</string>
+  <string name="TownOfUsMira.Role.Tracer.IntroBlurb">Follow the evidence.</string>
+  <string name="TownOfUsMira.Role.Tracer.MedDescription">Dust a player with invisible trace powder. Anyone who directly interacts with them leaves evidence only you can see.</string>
+  <string name="TownOfUsMira.Role.Tracer.TabDescription">Dust a player with invisible trace powder. Anyone who directly interacts with your Dusted target leaves private evidence only you can see. Trace does not spread beyond that first contact. Use the evidence to work out who has been near your target and why.</string>
+  <string name="TownOfUsMira.Role.Tracer.WikiDescription">Dust a player with invisible trace powder. Direct contact with your Dusted target leaves private Trace evidence only you can see. Trace can reveal a killer who murders your target and remains until after the next meeting.</string>
+
+
+  <!-- Condemner (TOU role integration keys) -->
+  <string name="TownOfUsMira.Role.Condemner">Condemner</string>
+  <string name="TownOfUsMira.Role.Condemner.IntroBlurb">Pass sentence in silence.</string>
+  <string name="TownOfUsMira.Role.Condemner.MedDescription">Secretly place players on Death Row. Their sentence is revealed at the next meeting and carried out when voting ends.</string>
+  <string name="TownOfUsMira.Role.Condemner.TabDescription">Use Death Note on a nearby non-Impostor to secretly place them on Death Row. You privately see a Death Note marker beside everyone you have condemned. At the next meeting, living condemned players are publicly marked with a red skull. Valid sentences are carried out when voting ends. Using Death Note resets your normal Kill cooldown.</string>
+  <string name="TownOfUsMira.Role.Condemner.WikiDescription">Use Death Note to secretly place a non-Impostor on Death Row. The Condemner privately sees a Death Note tracker on every marked player. Living condemned players are revealed with a public red skull at the next meeting and remain able to vote, guess, and use meeting abilities until their sentence is resolved.</string>
+  <string name="DiedToCondemner">Killed</string>
+  <string name="DiedToCondemnerDeathRow">Executed on Death Row</string>
+
+  <!-- SUI (TOU role integration keys) -->
+  <string name="TownOfUsMira.Role.SUI">SUI</string>
+  <string name="TownOfUsMira.Role.SUI.IntroBlurb">Protect the crew from lethal attacks.</string>
+  <string name="TownOfUsMira.Role.SUI.MedDescription">Protect multiple players from lethal attacks. The first attacker to trigger a protection is marked red for you to hunt.</string>
+  <string name="TownOfUsMira.Role.SUI.TabDescription">Protect living players from lethal attacks. Protections last while you are alive. The first attacker to trigger protection is marked RED and unlocks your Kill button. Only that marked attacker can be killed. Meeting guesses and ejections bypass protection.</string>
+  <string name="TownOfUsMira.Role.SUI.WikiDescription">Protect multiple living players from lethal attacks. A protected player knows they are protected. The first attacker to trigger a protection is marked red only for you and becomes your hunt target. While the hunt is active, your Kill button can only target that marked attacker.</string>
+
+
+  <!-- Tank (TOU role integration keys) -->
+  <string name="TownOfUsMira.Role.Tank">Tank</string>
+  <string name="TownOfUsMira.Role.Tank.IntroBlurb">Finish your tasks. Become the wall.</string>
+  <string name="TownOfUsMira.Role.Tank.MedDescription">Complete all of your tasks to gain permanent protection from ordinary direct kill attempts.</string>
+  <string name="TownOfUsMira.Role.Tank.TabDescription">Complete all assigned tasks to activate Tank protection. Once active, ordinary direct kill attempts against you are blocked. Indirect attacks, defense-bypassing attacks, meeting kills and ejections still work normally.</string>
+  <string name="TownOfUsMira.Role.Tank.WikiDescription">Complete every assigned task to activate permanent protection from ordinary direct kill attempts. If Can See Who Tried To Kill is enabled, a blocked attack also tells the Tank who attacked them.</string>
+
+  <!-- Alpha.10.5 modifiers -->
+  <string name="NDevModifierMenace">Menace</string>
+  <string name="NDevModifierMenaceIntroBlurb">Your kill cooldown is reduced.</string>
+  <string name="NDevModifierMenaceAmount">Menace Amount</string>
+  <string name="NDevModifierMenaceAssignmentChance">Menace Assignment Chance</string>
+  <string name="NDevModifierMenaceKillCooldownReduction">Kill Cooldown Reduction</string>
+
+  <string name="NDevModifierSoulhandler">Soulhandler</string>
+  <string name="NDevModifierSoulhandlerIntroBlurb">The dead reveal which side they belonged to.</string>
+  <string name="NDevModifierSoulhandlerAmount">Soulhandler Amount</string>
+  <string name="NDevModifierSoulhandlerAssignmentChance">Soulhandler Assignment Chance</string>
+
+  <string name="NDevModifierMiracle">Miracle</string>
+  <string name="NDevModifierMiracleIntroBlurb">Incoming kills may fail to kill you.</string>
+  <string name="NDevModifierMiracleAmount">Miracle Amount</string>
+  <string name="NDevModifierMiracleAssignmentChance">Miracle Assignment Chance</string>
+  <string name="NDevModifierMiracleSurvivalChance">Kill Survival Chance</string>
+
+  <string name="NDevModifierNull">Null</string>
+  <string name="NDevModifierNullIntroBlurb">Your vote secretly carries no voting power.</string>
+  <string name="NDevModifierNullAmount">Null Amount</string>
+  <string name="NDevModifierNullAssignmentChance">Null Assignment Chance</string>
+
+</resources>

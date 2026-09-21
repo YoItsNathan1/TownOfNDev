@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <DebugType>embedded</DebugType>
+    <RootNamespace>TownOfNDev</RootNamespace>
+    <Description>Town of NDev - a Town of Us: Mira extension by NDev Studios.</Description>
+    <Authors>NDev Studios</Authors>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionSuffix>beta.1</VersionSuffix>
+    <AssemblyName>TownOfNDev-$(VersionPrefix)-$(VersionSuffix)</AssemblyName>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\**\*.*" />
+  </ItemGroup>
+
+  <Import Project="../AmongUs.props" />
+
+  <Target Name="CopyToAmongUs" AfterTargets="Build" Condition="'$(AmongUs)' != ''">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(AmongUs)/BepInEx/plugins/" UseSymboliclinksIfPossible="true" />
+  </Target>
+</Project>
