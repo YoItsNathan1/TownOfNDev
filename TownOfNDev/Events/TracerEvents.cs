@@ -24,6 +24,7 @@ public static class TracerEvents
         }
 
         TracerSystem.BeginRoundAfterMeeting();
+        TracerDustButton.RecoverLocalAfterMeeting();
     }
 
     [RegisterEvent]

@@ -8,6 +8,7 @@ using MiraAPI.Events.Vanilla.Player;
 using MiraAPI.Modifiers;
 using MiraAPI.Translation;
 using Reactor.Utilities;
+using TownOfNDev.Buttons.Impostor;
 using TownOfNDev.Systems;
 using TownOfUs.Modifiers.Game.Assailant;
 using TownOfUs.Modules;
@@ -28,6 +29,7 @@ public static class CondemnerEvents
         }
 
         CondemnerSystem.BeginRoundAfterMeeting();
+        CondemnerDeathNoteButton.RecoverLocalAfterMeeting();
     }
 
     [RegisterEvent]

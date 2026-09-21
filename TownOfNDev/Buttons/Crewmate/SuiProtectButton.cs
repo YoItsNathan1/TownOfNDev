@@ -29,6 +29,11 @@ public sealed class SuiProtectButton : TownOfUsRoleButton<SuiRole, PlayerControl
 
     public override void CreateButton(Transform parent)
     {
+        // A button instance can survive HUD/lobby transitions even though an
+        // owner-result RPC was lost while the previous HUD was closing. Never
+        // carry that transient request lock into a newly-created HUD button.
+        _awaitingHost = false;
+
         base.CreateButton(parent);
 
         // The approved SUI artwork already contains the PROTECT label.
@@ -44,6 +49,14 @@ public sealed class SuiProtectButton : TownOfUsRoleButton<SuiRole, PlayerControl
         {
             Button.graphic.transform.localScale = new Vector3(1.12f, 1.12f, 1f);
         }
+    }
+
+    public override bool Enabled(RoleBehaviour? role)
+    {
+        // Use the role object Mira supplies directly. TownOfUsRoleButton also
+        // checks GetRole<T>(), which is unnecessary here and can be stale during
+        // HUD/meeting transitions for extension roles.
+        return !Disabled && role is SuiRole;
     }
 
     public override PlayerControl? GetTarget()
@@ -94,6 +107,19 @@ public sealed class SuiProtectButton : TownOfUsRoleButton<SuiRole, PlayerControl
         body.SetOutline(outline);
     }
 
+    public override void ResetCooldownAndOrEffect()
+    {
+        // Mira resets custom buttons at MeetingHud.Start and again when
+        // ExileController re-enables gameplay. _awaitingHost is TownOfNDev
+        // state, so Mira cannot clear it for us. If a result RPC arrived while
+        // the HUD was closing (or was otherwise missed locally), keeping this
+        // flag set would permanently disable Protect after the meeting.
+        _awaitingHost = false;
+        ResetTarget();
+        base.ResetCooldownAndOrEffect();
+        SetTimerPaused(false);
+    }
+
     public override void ClickHandler()
     {
         if (!CanClick() || Target == null)
@@ -119,6 +145,14 @@ public sealed class SuiProtectButton : TownOfUsRoleButton<SuiRole, PlayerControl
 
     public void ApplyHostResult(bool success)
     {
+        // Ignore a delayed result from a request that was abandoned by a
+        // meeting/HUD transition. Otherwise an old round can consume the new
+        // round's cooldown/state after recovery has already completed.
+        if (!_awaitingHost)
+        {
+            return;
+        }
+
         _awaitingHost = false;
         if (!success)
         {
@@ -128,6 +162,29 @@ public sealed class SuiProtectButton : TownOfUsRoleButton<SuiRole, PlayerControl
 
         SetTimer(Cooldown);
         ResetTarget();
+    }
+
+
+    public void RecoverAfterMeeting()
+    {
+        Disabled = false;
+        _awaitingHost = false;
+        ResetTarget();
+        EffectActive = false;
+        SetTimerPaused(false);
+        SetTimer(Cooldown);
+    }
+
+    public static void RecoverLocalAfterMeeting()
+    {
+        try
+        {
+            CustomButtonSingleton<SuiProtectButton>.Instance.RecoverAfterMeeting();
+        }
+        catch
+        {
+            // The lifecycle fallback creates/re-shows the button when the HUD is ready.
+        }
     }
 
 

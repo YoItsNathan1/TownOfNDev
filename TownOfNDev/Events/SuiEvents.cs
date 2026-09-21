@@ -23,6 +23,13 @@ public static class SuiEvents
             SuiProtectButton.ResetLocalState();
             SuiSystem.BeginGame();
         }
+        else
+        {
+            // RoundStartEvent is the last authoritative lifecycle point after an
+            // exile/meeting transition. Recover again here as a second guard in
+            // case HUD patch ordering skipped the normal Mira button reset path.
+            SuiProtectButton.RecoverLocalAfterMeeting();
+        }
 
         SuiOutlineRenderer.UpdateAll();
     }

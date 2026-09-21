@@ -35,6 +35,9 @@ public sealed class FungiInfectButton : TownOfUsRoleButton<FungiRole, PlayerCont
 
     public override void CreateButton(Transform parent)
     {
+        // Do not carry a stale host-result wait into a recreated HUD button.
+        _awaitingHost = false;
+
         base.CreateButton(parent);
 
         // The approved TownOfNDev sprite already contains the INFECT label. Keep the
@@ -66,6 +69,17 @@ public sealed class FungiInfectButton : TownOfUsRoleButton<FungiRole, PlayerCont
         return !_awaitingHost && base.CanClick();
     }
 
+    public override void ResetCooldownAndOrEffect()
+    {
+        // Mira resets custom buttons at both meeting boundaries, but the
+        // _awaitingHost flag is extension-owned state. Clear it with the native
+        // button reset so a missed/late result cannot brick Infect next round.
+        _awaitingHost = false;
+        ResetTarget();
+        base.ResetCooldownAndOrEffect();
+        SetTimerPaused(false);
+    }
+
     public override void ClickHandler()
     {
         if (!CanClick() || Target == null)
@@ -94,6 +108,11 @@ public sealed class FungiInfectButton : TownOfUsRoleButton<FungiRole, PlayerCont
 
     public void ApplyHostResult(bool success)
     {
+        if (!_awaitingHost)
+        {
+            return;
+        }
+
         _awaitingHost = false;
         if (!success)
         {
@@ -103,6 +122,29 @@ public sealed class FungiInfectButton : TownOfUsRoleButton<FungiRole, PlayerCont
         SetTimer(Cooldown);
         ResetTarget();
     }
+
+    public void RecoverAfterMeeting()
+    {
+        Disabled = false;
+        _awaitingHost = false;
+        ResetTarget();
+        EffectActive = false;
+        SetTimerPaused(false);
+        SetTimer(Cooldown);
+    }
+
+    public static void RecoverLocalAfterMeeting()
+    {
+        try
+        {
+            CustomButtonSingleton<FungiInfectButton>.Instance.RecoverAfterMeeting();
+        }
+        catch
+        {
+            // The lifecycle fallback creates/re-shows the button when the HUD is ready.
+        }
+    }
+
 
     public static void HandleHostResult(bool success)
     {

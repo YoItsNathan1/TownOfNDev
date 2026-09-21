@@ -3,6 +3,7 @@ using MiraAPI.Events.Vanilla.Gameplay;
 using MiraAPI.Modifiers;
 using MiraAPI.Networking;
 using MiraAPI.Utilities;
+using TownOfNDev.Buttons.Impostor;
 using TownOfNDev.Modifiers.Impostor;
 using TownOfNDev.Roles.Impostor;
 
@@ -10,6 +11,15 @@ namespace TownOfNDev.Events;
 
 public static class ReverserEvents
 {
+    [RegisterEvent]
+    public static void RoundStartHandler(RoundStartEvent @event)
+    {
+        if (!@event.TriggeredByIntro)
+        {
+            ReverserAlertButton.RecoverLocalAfterMeeting();
+        }
+    }
+
     // Run with the other direct-kill defensive mechanics and well before Miracle's
     // fallback survival roll. Alert is an active role ability, so it owns the
     // direct attack when it is currently active.

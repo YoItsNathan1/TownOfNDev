@@ -25,6 +25,9 @@ public sealed class TracerDustButton : TownOfUsRoleButton<TracerRole, PlayerCont
 
     public override void CreateButton(Transform parent)
     {
+        // Do not let a transient owner-result wait survive a HUD recreation.
+        _awaitingHost = false;
+
         base.CreateButton(parent);
 
         // The approved TownOfNDev artwork already contains the DUST label.
@@ -33,6 +36,14 @@ public sealed class TracerDustButton : TownOfUsRoleButton<TracerRole, PlayerCont
         {
             Button.buttonLabelText.gameObject.SetActive(false);
         }
+    }
+
+    public override bool Enabled(RoleBehaviour? role)
+    {
+        // Use the role object Mira supplies directly. TownOfUsRoleButton also
+        // checks GetRole<T>(), which is unnecessary here and can be stale during
+        // HUD/meeting transitions for extension roles.
+        return !Disabled && role is TracerRole;
     }
 
     public override PlayerControl? GetTarget()
@@ -62,6 +73,18 @@ public sealed class TracerDustButton : TownOfUsRoleButton<TracerRole, PlayerCont
         return !_awaitingHost && base.CanClick();
     }
 
+    public override void ResetCooldownAndOrEffect()
+    {
+        // Mira invokes this on meeting start and when gameplay resumes. The
+        // framework resets Timer/Effect/PerRound uses, but it has no knowledge
+        // of TownOfNDev's host-result lock. Clear it at the same lifecycle
+        // boundary so Dust cannot remain disabled after a meeting.
+        _awaitingHost = false;
+        ResetTarget();
+        base.ResetCooldownAndOrEffect();
+        SetTimerPaused(false);
+    }
+
     public override void ClickHandler()
     {
         if (!CanClick() || Target == null)
@@ -86,6 +109,11 @@ public sealed class TracerDustButton : TownOfUsRoleButton<TracerRole, PlayerCont
 
     public void ApplyHostResult(bool success)
     {
+        if (!_awaitingHost)
+        {
+            return;
+        }
+
         _awaitingHost = false;
         if (!success)
         {
@@ -96,6 +124,30 @@ public sealed class TracerDustButton : TownOfUsRoleButton<TracerRole, PlayerCont
         SetTimer(0f);
         ResetTarget();
     }
+
+    public void RecoverAfterMeeting()
+    {
+        Disabled = false;
+        _awaitingHost = false;
+        ResetTarget();
+        EffectActive = false;
+        SetTimerPaused(false);
+        SetTimer(0f);
+        SetUses(MaxUses);
+    }
+
+    public static void RecoverLocalAfterMeeting()
+    {
+        try
+        {
+            CustomButtonSingleton<TracerDustButton>.Instance.RecoverAfterMeeting();
+        }
+        catch
+        {
+            // The lifecycle fallback creates/re-shows the button when the HUD is ready.
+        }
+    }
+
 
     public static void HandleHostResult(bool success)
     {

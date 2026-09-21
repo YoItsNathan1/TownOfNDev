@@ -27,6 +27,7 @@ public static class FungiEvents
         // has started again. Newly infected Stage 0 players therefore remain hidden
         // throughout the round in which they were infected.
         FungiInfectionSystem.AdvanceGrowthAfterMeeting();
+        FungiInfectButton.RecoverLocalAfterMeeting();
     }
 
     [RegisterEvent]
