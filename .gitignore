@@ -4,4 +4,3 @@ obj/
 .idea/
 *.user
 *.suo
-packages.local/*.nupkg
