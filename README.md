@@ -10,9 +10,11 @@ It expands Town of Us with a collection of custom roles and modifiers designed t
 
 ## Latest Version
 
-**TownOfNDev `v0.1.0-beta.1.0.1`**
+**TownOfNDev `v0.1.0-beta.1.0.3`**
 
 [Download the latest release](../../releases/latest)
+
+> **Testing notice:** `v0.1.0-beta.1.0.3` includes major active-ability lifecycle changes for SUI, Tracer, Fungi, Condemner, and Reverser. The build compiles successfully, but the new post-meeting ability fixes are still awaiting full online multiplayer verification.
 
 ---
 
@@ -108,22 +110,9 @@ The beta phase will focus on:
 - performance and stability
 - preparing for the first stable release
 
+The current `v0.1.0-beta.1.0.3` build is specifically awaiting online multiplayer verification of active role abilities across meeting and round transitions.
+
 If you encounter an issue, please report it through the repository's Issues page.
-
----
-
-## Building From Source
-
-TownOfNDev is built using .NET.
-
-From the repository root:
-
-```powershell
-dotnet restore .\TownOfNDev.sln
-dotnet build .\TownOfNDev.sln -c Release --no-restore
-```
-
-The compiled TownOfNDev DLL will be produced in the project's Release output directory.
 
 ---
 
@@ -134,7 +123,7 @@ TownOfNDev uses semantic-style versioning during development.
 Current release:
 
 ```text
-v0.1.0-beta.1.0.1
+v0.1.0-beta.1.0.3
 ```
 
 Future beta builds will increment the beta suffix as fixes and improvements are made.
@@ -142,7 +131,7 @@ Future beta builds will increment the beta suffix as fixes and improvements are 
 Examples:
 
 ```text
-v0.1.0-beta.1.0.2
+v0.1.0-beta.1.0.4
 v0.1.0-beta.1.1.0
 v0.1.0-beta.2.0.0
 ```
