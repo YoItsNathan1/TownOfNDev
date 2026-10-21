@@ -1,14 +1,28 @@
 <Project>
   <ItemGroup>
-    <!-- Town of Us: Mira 1.7.3 release dependency set (Among Us v18.0.x). -->
+    <!-- ToU-Mira 1.7.9 Beta 1 is referenced from the official, freshly installed
+         runtime assembly rather than silently compiling against ToU-Mira 1.7.3. -->
+    <Reference Include="TownOfUsMira">
+      <HintPath>$(TownOfUs179Dll)</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="MiraAPI">
+      <HintPath>$(MiraApi179Dll)</HintPath>
+      <Private>false</Private>
+    </Reference>
     <PackageReference Include="Reactor" Version="2.5.0-ci.371" />
-    <PackageReference Include="AllOfUs.MiraAPI" Version="0.5.0" />
-    <PackageReference Include="TownOfUsMira" Version="1.7.3" />
     <PackageReference Include="PerfectComms.Api" Version="4.1.7.1" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.735" Private="false" ExcludeAssets="runtime;native" />
-    <PackageReference Include="AmongUs.GameLibs.Steam" Version="2026.8.18" PrivateAssets="all" />
+    <PackageReference Include="AmongUs.GameLibs.Steam" Version="2026.9.29" PrivateAssets="all" />
 
     <PackageReference Include="BepInEx.AutoPlugin" Version="1.1.0" PrivateAssets="all" />
     <PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1" PrivateAssets="all" ExcludeAssets="runtime" />
   </ItemGroup>
+
+  <Target Name="VerifyToUMira179References" BeforeTargets="ResolveReferences">
+    <Error Condition="'$(TownOfUs179Dll)' == '' Or !Exists('$(TownOfUs179Dll)')"
+           Text="Missing ToU-Mira 1.7.9 DLL. Run tools/build-tou179.ps1 with -InstallDir pointing to a clean official ToU-Mira 1.7.9 Beta 1 installation." />
+    <Error Condition="'$(MiraApi179Dll)' == '' Or !Exists('$(MiraApi179Dll)')"
+           Text="Missing MiraAPI 0.6.0 DLL. Run tools/build-tou179.ps1 against a clean official ToU-Mira 1.7.9 Beta 1 installation." />
+  </Target>
 </Project>
