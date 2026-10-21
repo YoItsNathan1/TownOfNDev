@@ -44,7 +44,11 @@ public partial class TownOfNDevPlugin : BasePlugin, IMiraPlugin
         WinConditionRegistry.Register(new TrollWinCondition());
         WinConditionRegistry.Register(new FungiWinCondition());
 
-        ReactorCredits.Register("TownOfNDev", Version, IsDevBuild, ReactorCredits.AlwaysShow);
+        // Reactor limits the combined name/version length to 60 characters.
+        // The generated +commit SHA exceeds that limit, so use a short display version.
+        // PingTracker has a separate colour-aware display patch below.
+        ReactorCredits.Register("TownOfNDev", "0.1.0-beta.2.0.0-tou179b1", IsDevBuild,
+            location => location == ReactorCredits.Location.MainMenu);
         Harmony.PatchAll();
         Log.LogInfo($"TownOfNDev {Version} loaded.");
     }
