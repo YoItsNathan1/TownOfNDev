@@ -8,6 +8,7 @@ public enum TownOfNDevRpc : uint
     // Reserved legacy id. Infection state now synchronizes through MiraAPI RpcAddModifier.
     FungiApplyInfection = 6103,
     FungiSetObjectiveAchieved = 6104,
+    FungiSetGrowthStage = 6105,
 
     TracerDustRequest = 6200,
     TracerDustResult = 6201,

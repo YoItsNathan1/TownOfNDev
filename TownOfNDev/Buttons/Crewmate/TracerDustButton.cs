@@ -12,7 +12,7 @@ namespace TownOfNDev.Buttons.Crewmate;
 
 public sealed class TracerDustButton : TownOfUsRoleButton<TracerRole, PlayerControl>
 {
-    private bool _awaitingHost;
+    private readonly HostAbilityRequest _request = new(nameof(TracerDustButton));
 
     public override string Name => "Dust";
     public override BaseKeybind Keybind => Keybinds.SecondaryAction;
@@ -25,13 +25,10 @@ public sealed class TracerDustButton : TownOfUsRoleButton<TracerRole, PlayerCont
 
     public override void CreateButton(Transform parent)
     {
-        // Do not let a transient owner-result wait survive a HUD recreation.
-        _awaitingHost = false;
-
+        _request.Cancel();
         base.CreateButton(parent);
 
-        // The approved TownOfNDev artwork already contains the DUST label.
-        // Keep Mira's native keybind/uses UI but hide the duplicate text label.
+        // The current artwork already contains the DUST label.
         if (Button?.buttonLabelText != null)
         {
             Button.buttonLabelText.gameObject.SetActive(false);
@@ -40,9 +37,8 @@ public sealed class TracerDustButton : TownOfUsRoleButton<TracerRole, PlayerCont
 
     public override bool Enabled(RoleBehaviour? role)
     {
-        // Use the role object Mira supplies directly. TownOfUsRoleButton also
-        // checks GetRole<T>(), which is unnecessary here and can be stale during
-        // HUD/meeting transitions for extension roles.
+        // Use Mira's supplied role instead of a second GetRole<T>() lookup
+        // during the HUD transition back from a meeting.
         return !Disabled && role is TracerRole;
     }
 
@@ -65,21 +61,19 @@ public sealed class TracerDustButton : TownOfUsRoleButton<TracerRole, PlayerCont
 
     public override bool CanUse()
     {
-        return !_awaitingHost && base.CanUse();
+        return !_request.IsPending && base.CanUse();
     }
 
     public override bool CanClick()
     {
-        return !_awaitingHost && base.CanClick();
+        return !_request.IsPending && base.CanClick();
     }
 
     public override void ResetCooldownAndOrEffect()
     {
-        // Mira invokes this on meeting start and when gameplay resumes. The
-        // framework resets Timer/Effect/PerRound uses, but it has no knowledge
-        // of TownOfNDev's host-result lock. Clear it at the same lifecycle
-        // boundary so Dust cannot remain disabled after a meeting.
-        _awaitingHost = false;
+        // Mira invokes this on meeting start and after exile. Invalidate any
+        // outstanding response so it cannot consume the next round's ability.
+        _request.Cancel();
         ResetTarget();
         base.ResetCooldownAndOrEffect();
         SetTimerPaused(false);
@@ -92,73 +86,52 @@ public sealed class TracerDustButton : TownOfUsRoleButton<TracerRole, PlayerCont
             return;
         }
 
-        if (ButterfingersController.TryFumble(FumbleActionKind.Ability, ClickHandler))
+        var local = PlayerControl.LocalPlayer;
+        if (!local || local.Data == null || local.Data.IsDead || local.Data.Disconnected)
         {
             return;
         }
 
-        _awaitingHost = true;
-        TracerSystem.RpcRequestDust(PlayerControl.LocalPlayer, Target);
+        // The Butterfingers MiraButtonClickEvent intercepts the click pipeline
+        // before this handler; do not run TryFumble a second time here.
+        var requestId = _request.Begin();
+        TracerSystem.RpcRequestDust(local, Target, requestId);
     }
 
     protected override void OnClick()
     {
-        // Host-authoritative. The per-round use is consumed only after the host
-        // confirms the target/range/state and applies synchronized Dust.
+        // Intentionally unused: the inherited TOU handler would consume a use
+        // before the host validates the request.
     }
 
-    public void ApplyHostResult(bool success)
+    private void ApplyHostResult(int requestId, bool success)
     {
-        if (!_awaitingHost)
+        if (!_request.TryComplete(requestId))
         {
             return;
         }
 
-        _awaitingHost = false;
         if (!success)
         {
+            ResetTarget();
             return;
         }
 
         SetUses(Mathf.Max(0, UsesLeft - 1));
-        SetTimer(0f);
         ResetTarget();
     }
 
-    public void RecoverAfterMeeting()
+    public static void HandleHostResult(int requestId, bool success)
     {
-        Disabled = false;
-        _awaitingHost = false;
-        ResetTarget();
-        EffectActive = false;
-        SetTimerPaused(false);
-        SetTimer(0f);
-        SetUses(MaxUses);
-    }
-
-    public static void RecoverLocalAfterMeeting()
-    {
+        // A result may arrive while the HUD is being destroyed or a role changes.
+        // The authoritative mechanic itself is separately synced by its system.
         try
         {
-            CustomButtonSingleton<TracerDustButton>.Instance.RecoverAfterMeeting();
+            CustomButtonSingleton<TracerDustButton>.Instance.ApplyHostResult(requestId, success);
         }
-        catch
+        catch (System.Exception ex)
         {
-            // The lifecycle fallback creates/re-shows the button when the HUD is ready.
-        }
-    }
-
-
-    public static void HandleHostResult(bool success)
-    {
-        try
-        {
-            CustomButtonSingleton<TracerDustButton>.Instance.ApplyHostResult(success);
-        }
-        catch
-        {
-            // The HUD can already be closing when a result arrives. Dust state is
-            // still network-synchronized independently of the local button UI.
+            HostAbilityRequest.LogResultFailure(nameof(TracerDustButton), ex);
         }
     }
 }

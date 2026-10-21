@@ -118,6 +118,14 @@ public static class FungiInfectionSystem
 
     public static void AdvanceGrowthAfterMeeting()
     {
+        // Only the host decides how much infection advances between rounds.
+        // Applying stages independently on each client can leave visuals and
+        // state divergent if a meeting event is received at a different point.
+        if (AmongUsClient.Instance == null || !AmongUsClient.Instance.AmHost)
+        {
+            return;
+        }
+
         foreach (var player in PlayerControl.AllPlayerControls.ToArray())
         {
             if (!IsValidLiving(player) || !player.TryGetModifier<FungiInfectedModifier>(out var modifier))
@@ -125,7 +133,20 @@ public static class FungiInfectionSystem
                 continue;
             }
 
-            modifier.SetStage((byte)Math.Min(3, modifier.Stage + 1));
+            var nextStage = (byte)Math.Min(3, modifier.Stage + 1);
+            modifier.SetStage(nextStage);
+            RpcSetGrowthStage(player, nextStage);
+        }
+    }
+
+    [MethodRpc((uint)TownOfNDevRpc.FungiSetGrowthStage)]
+    public static void RpcSetGrowthStage(PlayerControl player, byte stage)
+    {
+        // This is a stage SET, not an increment: receiving the value twice is
+        // harmless and all clients converge on the host's authoritative stage.
+        if (player && player.TryGetModifier<FungiInfectedModifier>(out var modifier))
+        {
+            modifier.SetStage(stage);
         }
     }
 
@@ -184,7 +205,7 @@ public static class FungiInfectionSystem
     }
 
     [MethodRpc((uint)TownOfNDevRpc.FungiInfectRequest)]
-    public static void RpcRequestInfect(PlayerControl source, PlayerControl target)
+    public static void RpcRequestInfect(PlayerControl source, PlayerControl target, int requestId)
     {
         if (AmongUsClient.Instance == null || !AmongUsClient.Instance.AmHost)
         {
@@ -205,15 +226,15 @@ public static class FungiInfectionSystem
 
         // This result RPC only controls the Fungi owner's button/cooldown. The
         // infection itself has already been synchronized independently above.
-        RpcInfectResult(source, target, success);
+        RpcInfectResult(source, target, requestId, success);
     }
 
     [MethodRpc((uint)TownOfNDevRpc.FungiInfectResult)]
-    public static void RpcInfectResult(PlayerControl source, PlayerControl target, bool success)
+    public static void RpcInfectResult(PlayerControl source, PlayerControl target, int requestId, bool success)
     {
         if (source && source.AmOwner)
         {
-            FungiInfectButton.HandleHostResult(success);
+            FungiInfectButton.HandleHostResult(requestId, success);
         }
     }
 

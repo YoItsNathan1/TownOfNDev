@@ -230,7 +230,7 @@ public static class SuiSystem
     }
 
     [MethodRpc((uint)TownOfNDevRpc.SuiProtectRequest)]
-    public static void RpcRequestProtect(PlayerControl source, PlayerControl target)
+    public static void RpcRequestProtect(PlayerControl source, PlayerControl target, int requestId)
     {
         if (AmongUsClient.Instance == null || !AmongUsClient.Instance.AmHost)
         {
@@ -244,15 +244,15 @@ public static class SuiSystem
             target.RpcAddModifier<SuiProtectedModifier>(source.PlayerId);
         }
 
-        RpcProtectResult(source, target, success);
+        RpcProtectResult(source, target, requestId, success);
     }
 
     [MethodRpc((uint)TownOfNDevRpc.SuiProtectResult)]
-    public static void RpcProtectResult(PlayerControl source, PlayerControl target, bool success)
+    public static void RpcProtectResult(PlayerControl source, PlayerControl target, int requestId, bool success)
     {
         if (source && source.AmOwner)
         {
-            SuiProtectButton.HandleHostResult(success);
+            SuiProtectButton.HandleHostResult(requestId, success);
         }
     }
 

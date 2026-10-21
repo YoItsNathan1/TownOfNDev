@@ -23,11 +23,7 @@ public static class FungiEvents
             return;
         }
 
-        // A visible strand only grows after the meeting has finished and gameplay
-        // has started again. Newly infected Stage 0 players therefore remain hidden
-        // throughout the round in which they were infected.
         FungiInfectionSystem.AdvanceGrowthAfterMeeting();
-        FungiInfectButton.RecoverLocalAfterMeeting();
     }
 
     [RegisterEvent]
@@ -59,15 +55,6 @@ public static class FungiEvents
             return;
         }
 
-        // Do not decide the contagious side on the client. Fungi members themselves
-        // are contagious sources, and infection state may have changed on the host
-        // before this interaction commits. The host validates both participants after
-        // the successful action is confirmed.
-
-        // Remember the pre-click state. The event fires before the action is committed,
-        // so we wait for the button's real state transition. This also handles a
-        // Butterfingers-delayed ability: no infection spreads until the replay really
-        // succeeds and consumes its cooldown/use/effect state.
         Coroutines.Start(CoConfirmSuccessfulInteraction(
             @event,
             button,

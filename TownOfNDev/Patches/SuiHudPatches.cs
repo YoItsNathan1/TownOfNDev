@@ -1,7 +1,4 @@
 using HarmonyLib;
-using MiraAPI.Hud;
-using MiraAPI.Patches;
-using TownOfNDev.Buttons.Crewmate;
 using TownOfNDev.Roles.Crewmate;
 using TownOfNDev.Systems;
 using TownOfUs.Modules.Components;
@@ -17,7 +14,6 @@ public static class SuiHudPatches
     {
         SuiOutlineRenderer.UpdateAll();
         SuiSystem.HostMaintenance();
-        EnsureProtectButtonState();
         EnsureHuntKillButtonState();
     }
 
@@ -29,48 +25,8 @@ public static class SuiHudPatches
         EnsureHuntKillButtonState();
     }
 
-    private static void EnsureProtectButtonState()
-    {
-        var local = PlayerControl.LocalPlayer;
-        if (!local || local.Data == null || !HudManager.InstanceExists)
-        {
-            return;
-        }
-
-        SuiProtectButton protectButton;
-        try
-        {
-            protectButton = CustomButtonSingleton<SuiProtectButton>.Instance;
-        }
-        catch
-        {
-            return;
-        }
-
-        var hudAvailable = !MeetingHud.Instance &&
-                           (HudManager.Instance.UseButton.isActiveAndEnabled ||
-                            HudManager.Instance.PetButton.isActiveAndEnabled);
-        var shouldShow = local.Data.Role is SuiRole &&
-                         !local.Data.IsDead && !local.Data.Disconnected && hudAvailable;
-
-        if (protectButton.Button == null && shouldShow && HudManagerPatches.BottomRight != null)
-        {
-            try
-            {
-                protectButton.CreateButton(HudManagerPatches.BottomRight);
-            }
-            catch
-            {
-                return;
-            }
-        }
-
-        if (protectButton.Button != null)
-        {
-            protectButton.Button.ToggleVisible(shouldShow);
-        }
-    }
-
+    // SUI's temporary hunt uses the vanilla Kill button, so this remains NDev-owned.
+    // The Protect custom button itself is now left entirely to Mira/TOU.
     private static void EnsureHuntKillButtonState()
     {
         var local = PlayerControl.LocalPlayer;

@@ -1,5 +1,4 @@
 using HarmonyLib;
-using MiraAPI.Hud;
 using TownOfNDev.Systems;
 
 namespace TownOfNDev.Patches;
@@ -53,13 +52,5 @@ public static class ButterfingersActionPatches
     public static bool SecondaryAbilityButtonPrefix(SecondaryAbilityButton __instance)
     {
         return !ButterfingersController.TryFumble(FumbleActionKind.Ability, __instance.DoClick);
-    }
-
-    [HarmonyPrefix]
-    [HarmonyPriority(Priority.Last)]
-    [HarmonyPatch(typeof(CustomActionButton), nameof(CustomActionButton.ClickHandler))]
-    public static bool CustomActionButtonPrefix(CustomActionButton __instance)
-    {
-        return !ButterfingersController.TryFumble(FumbleActionKind.Ability, __instance.ClickHandler);
     }
 }

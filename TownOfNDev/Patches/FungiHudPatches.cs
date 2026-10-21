@@ -1,11 +1,6 @@
 using HarmonyLib;
-using MiraAPI.Hud;
-using MiraAPI.Patches;
-using TownOfNDev.Buttons.Neutral;
-using TownOfNDev.Roles.Neutral;
 using TownOfNDev.Systems;
 using TownOfUs.Modules.Components;
-using UnityEngine;
 
 namespace TownOfNDev.Patches;
 
@@ -18,49 +13,6 @@ public static class FungiHudPatches
     {
         FungiGrowthRenderer.UpdateAll();
         FungiInfectionSystem.HostUpdateObjective();
-        EnsureInfectButtonState();
-    }
-
-    private static void EnsureInfectButtonState()
-    {
-        var local = PlayerControl.LocalPlayer;
-        if (!local || local.Data == null || !HudManager.InstanceExists)
-        {
-            return;
-        }
-
-        FungiInfectButton infectButton;
-        try
-        {
-            infectButton = CustomButtonSingleton<FungiInfectButton>.Instance;
-        }
-        catch
-        {
-            return;
-        }
-
-        var isFungi = local.Data.Role is FungiRole || FungiInfectionSystem.IsFungi(local);
-        var hudAvailable = !MeetingHud.Instance &&
-                           (HudManager.Instance.UseButton.isActiveAndEnabled ||
-                            HudManager.Instance.PetButton.isActiveAndEnabled);
-        var shouldShow = isFungi && !local.Data.IsDead && !local.Data.Disconnected && hudAvailable;
-
-        if (infectButton.Button == null && shouldShow && HudManagerPatches.BottomRight != null)
-        {
-            try
-            {
-                infectButton.CreateButton(HudManagerPatches.BottomRight);
-            }
-            catch
-            {
-                return;
-            }
-        }
-
-        if (infectButton.Button != null)
-        {
-            infectButton.Button.ToggleVisible(shouldShow);
-        }
     }
 
     [HarmonyPostfix]

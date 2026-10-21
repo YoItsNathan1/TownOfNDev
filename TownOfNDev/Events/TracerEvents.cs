@@ -24,7 +24,6 @@ public static class TracerEvents
         }
 
         TracerSystem.BeginRoundAfterMeeting();
-        TracerDustButton.RecoverLocalAfterMeeting();
     }
 
     [RegisterEvent]
@@ -47,9 +46,6 @@ public static class TracerEvents
     [RegisterEvent(10000)]
     public static void AfterMurderHandler(AfterMurderEvent @event)
     {
-        // AfterMurderEvent is only fired for a successful murder. The host can use
-        // its synchronized Dust state directly, including the victim's Dust that
-        // remains for this frame, to leave evidence on the living killer.
         if (AmongUsClient.Instance != null && AmongUsClient.Instance.AmHost)
         {
             TracerSystem.HostHandleMurder(@event.Source, @event.Target);
@@ -59,8 +55,6 @@ public static class TracerEvents
     [RegisterEvent(9990)]
     public static void PlayerAbilityInteractionHandler(MiraButtonClickEvent @event)
     {
-        // Applying Dust itself must not make the Tracer pick up their own powder.
-        // Every other successful player-targeted custom ability is eligible.
         if (@event.Button is TracerDustButton || @event.Button is not CustomActionButton<PlayerControl> button)
         {
             return;
@@ -121,8 +115,6 @@ public static class TracerEvents
                 yield break;
             }
 
-            // Successful non-kill interactions only leave evidence if both players
-            // remain alive. Successful murders are handled separately above.
             if (source.Data.IsDead || target.Data.IsDead || source.Data.Disconnected || target.Data.Disconnected)
             {
                 yield break;

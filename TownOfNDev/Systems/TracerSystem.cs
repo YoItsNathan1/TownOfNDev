@@ -154,7 +154,7 @@ public static class TracerSystem
     }
 
     [MethodRpc((uint)TownOfNDevRpc.TracerDustRequest)]
-    public static void RpcRequestDust(PlayerControl source, PlayerControl target)
+    public static void RpcRequestDust(PlayerControl source, PlayerControl target, int requestId)
     {
         if (AmongUsClient.Instance == null || !AmongUsClient.Instance.AmHost)
         {
@@ -169,15 +169,15 @@ public static class TracerSystem
             DustUsedThisRound.Add(source.PlayerId);
         }
 
-        RpcDustResult(source, target, success);
+        RpcDustResult(source, target, requestId, success);
     }
 
     [MethodRpc((uint)TownOfNDevRpc.TracerDustResult)]
-    public static void RpcDustResult(PlayerControl source, PlayerControl target, bool success)
+    public static void RpcDustResult(PlayerControl source, PlayerControl target, int requestId, bool success)
     {
         if (source && source.AmOwner)
         {
-            TracerDustButton.HandleHostResult(success);
+            TracerDustButton.HandleHostResult(requestId, success);
         }
     }
 

@@ -153,7 +153,7 @@ public static class CondemnerSystem
     }
 
     [MethodRpc((uint)TownOfNDevRpc.CondemnerDeathNoteRequest)]
-    public static void RpcRequestDeathNote(PlayerControl source, PlayerControl target)
+    public static void RpcRequestDeathNote(PlayerControl source, PlayerControl target, int requestId)
     {
         if (AmongUsClient.Instance == null || !AmongUsClient.Instance.AmHost)
         {
@@ -167,15 +167,15 @@ public static class CondemnerSystem
             UsesThisRound[source.PlayerId] = GetUsesThisRound(source.PlayerId) + 1;
         }
 
-        RpcDeathNoteResult(source, target, success);
+        RpcDeathNoteResult(source, target, requestId, success);
     }
 
     [MethodRpc((uint)TownOfNDevRpc.CondemnerDeathNoteResult)]
-    public static void RpcDeathNoteResult(PlayerControl source, PlayerControl target, bool success)
+    public static void RpcDeathNoteResult(PlayerControl source, PlayerControl target, int requestId, bool success)
     {
         if (source && source.AmOwner)
         {
-            CondemnerDeathNoteButton.HandleHostResult(success);
+            CondemnerDeathNoteButton.HandleHostResult(requestId, success);
         }
     }
 
@@ -297,7 +297,8 @@ public static class CondemnerSystem
                 player != null &&
                 player != source &&
                 !player.IsImpostorAligned() &&
-                !IsCondemned(player));
+                !IsCondemned(player) &&
+                !player.HasModifier<WardenFortifiedModifier>());
 
         return closest is not null && closest && closest.PlayerId == target.PlayerId;
     }

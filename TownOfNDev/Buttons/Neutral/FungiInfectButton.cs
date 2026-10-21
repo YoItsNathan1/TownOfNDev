@@ -14,7 +14,7 @@ namespace TownOfNDev.Buttons.Neutral;
 
 public sealed class FungiInfectButton : TownOfUsRoleButton<FungiRole, PlayerControl>
 {
-    private bool _awaitingHost;
+    private readonly HostAbilityRequest _request = new(nameof(FungiInfectButton));
 
     public override string Name => "Infect";
     public override BaseKeybind Keybind => Keybinds.SecondaryAction;
@@ -26,6 +26,18 @@ public sealed class FungiInfectButton : TownOfUsRoleButton<FungiRole, PlayerCont
         45f);
     public override LoadableAsset<Sprite> Sprite => TownOfNDevAssets.FungiInfectButton;
 
+    public override void CreateButton(Transform parent)
+    {
+        _request.Cancel();
+        base.CreateButton(parent);
+
+        // The current artwork already contains the INFECT label.
+        if (Button?.buttonLabelText != null)
+        {
+            Button.buttonLabelText.gameObject.SetActive(false);
+        }
+    }
+
     public override bool Enabled(RoleBehaviour? role)
     {
         var local = PlayerControl.LocalPlayer;
@@ -33,24 +45,15 @@ public sealed class FungiInfectButton : TownOfUsRoleButton<FungiRole, PlayerCont
                (role is FungiRole || FungiInfectionSystem.IsFungi(local));
     }
 
-    public override void CreateButton(Transform parent)
-    {
-        // Do not carry a stale host-result wait into a recreated HUD button.
-        _awaitingHost = false;
-
-        base.CreateButton(parent);
-
-        // The approved TownOfNDev sprite already contains the INFECT label. Keep the
-        // native cooldown text, but hide Mira's duplicate label.
-        if (Button?.buttonLabelText != null)
-        {
-            Button.buttonLabelText.gameObject.SetActive(false);
-        }
-    }
-
     public override PlayerControl? GetTarget()
     {
-        return PlayerControl.LocalPlayer.GetClosestLivingPlayer(
+        var local = PlayerControl.LocalPlayer;
+        if (!local)
+        {
+            return null;
+        }
+
+        return local.GetClosestLivingPlayer(
             true,
             Distance,
             predicate: player =>
@@ -61,20 +64,19 @@ public sealed class FungiInfectButton : TownOfUsRoleButton<FungiRole, PlayerCont
 
     public override bool CanUse()
     {
-        return !_awaitingHost && base.CanUse();
+        return !_request.IsPending && base.CanUse();
     }
 
     public override bool CanClick()
     {
-        return !_awaitingHost && base.CanClick();
+        return !_request.IsPending && base.CanClick();
     }
 
     public override void ResetCooldownAndOrEffect()
     {
-        // Mira resets custom buttons at both meeting boundaries, but the
-        // _awaitingHost flag is extension-owned state. Clear it with the native
-        // button reset so a missed/late result cannot brick Infect next round.
-        _awaitingHost = false;
+        // Mira invokes this on meeting start and after exile. Invalidate any
+        // outstanding response so it cannot consume the next round's ability.
+        _request.Cancel();
         ResetTarget();
         base.ResetCooldownAndOrEffect();
         SetTimerPaused(false);
@@ -87,35 +89,34 @@ public sealed class FungiInfectButton : TownOfUsRoleButton<FungiRole, PlayerCont
             return;
         }
 
-        // Fungi is still a role ability, so Butterfingers may delay it when the
-        // universal modifier's role-ability option is enabled. The replay calls
-        // back into this method and revalidates range/target/cooldown before
-        // requesting the infection from the host.
-        if (ButterfingersController.TryFumble(FumbleActionKind.Ability, ClickHandler))
+        var local = PlayerControl.LocalPlayer;
+        if (!local || local.Data == null || local.Data.IsDead || local.Data.Disconnected)
         {
             return;
         }
 
-        _awaitingHost = true;
-        FungiInfectionSystem.RpcRequestInfect(PlayerControl.LocalPlayer, Target);
+        // The Butterfingers MiraButtonClickEvent intercepts the click pipeline
+        // before this handler; do not run TryFumble a second time here.
+        var requestId = _request.Begin();
+        FungiInfectionSystem.RpcRequestInfect(local, Target, requestId);
     }
 
     protected override void OnClick()
     {
-        // ClickHandler is host-authoritative for Fungi; cooldown is only consumed
-        // after a successful result is returned by the host.
+        // Intentionally unused: the inherited TOU handler would consume a use
+        // before the host validates the request.
     }
 
-    public void ApplyHostResult(bool success)
+    private void ApplyHostResult(int requestId, bool success)
     {
-        if (!_awaitingHost)
+        if (!_request.TryComplete(requestId))
         {
             return;
         }
 
-        _awaitingHost = false;
         if (!success)
         {
+            ResetTarget();
             return;
         }
 
@@ -123,39 +124,17 @@ public sealed class FungiInfectButton : TownOfUsRoleButton<FungiRole, PlayerCont
         ResetTarget();
     }
 
-    public void RecoverAfterMeeting()
+    public static void HandleHostResult(int requestId, bool success)
     {
-        Disabled = false;
-        _awaitingHost = false;
-        ResetTarget();
-        EffectActive = false;
-        SetTimerPaused(false);
-        SetTimer(Cooldown);
-    }
-
-    public static void RecoverLocalAfterMeeting()
-    {
+        // A result may arrive while the HUD is being destroyed or a role changes.
+        // The authoritative mechanic itself is separately synced by its system.
         try
         {
-            CustomButtonSingleton<FungiInfectButton>.Instance.RecoverAfterMeeting();
+            CustomButtonSingleton<FungiInfectButton>.Instance.ApplyHostResult(requestId, success);
         }
-        catch
+        catch (System.Exception ex)
         {
-            // The lifecycle fallback creates/re-shows the button when the HUD is ready.
-        }
-    }
-
-
-    public static void HandleHostResult(bool success)
-    {
-        try
-        {
-            CustomButtonSingleton<FungiInfectButton>.Instance.ApplyHostResult(success);
-        }
-        catch
-        {
-            // The HUD may already be closing when a result arrives. Infection state
-            // is still authoritative; only the local visual cooldown update is skipped.
+            HostAbilityRequest.LogResultFailure(nameof(FungiInfectButton), ex);
         }
     }
 }
