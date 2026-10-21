@@ -8,13 +8,13 @@ It expands Town of Us with a collection of custom roles and modifiers designed t
 
 ---
 
-## Latest Version
+## Current Version
 
-**TownOfNDev `v0.1.0-beta.1.0.3`**
+**TownOfNDev `v0.1.0-beta.2.0.0`** (current source/testing build)
 
-[Download the latest release](../../releases/latest)
+[View published releases and downloads](../../releases)
 
-> **Testing notice:** `v0.1.0-beta.1.0.3` includes major active-ability lifecycle changes for SUI, Tracer, Fungi, Condemner, and Reverser. The build compiles successfully, but the new post-meeting ability fixes are still awaiting full online multiplayer verification.
+> **Beta testing notice:** Beta.2.0.0 includes improvements to multiplayer ability reliability, particularly across meeting and round transitions. It also refines ability cooldowns, limited uses, and selected role interactions. The updated build compiles successfully; full online multiplayer verification is still pending. Check the Releases page for the version of the currently published DLL.
 
 ---
 
@@ -88,11 +88,11 @@ Each modifier introduces additional effects that can change how a player interac
 TownOfNDev requires a compatible installation of **Town of Us: Mira** and its required dependencies.
 
 1. Install Town of Us: Mira.
-2. Download the latest TownOfNDev DLL from the [Releases](../../releases) page.
-3. Place the TownOfNDev DLL alongside the appropriate BepInEx/Town of Us plugin files.
+2. Download the desired TownOfNDev DLL from the [Releases](../../releases) page.
+3. Remove any older TownOfNDev DLL and place the downloaded DLL alongside the appropriate BepInEx/Town of Us plugin files.
 4. Launch Among Us.
 
-For beta builds, make sure all players are using compatible versions of the required mods.
+For multiplayer beta testing, all players should use the **same TownOfNDev build** and compatible versions of the required mods.
 
 ---
 
@@ -110,9 +110,9 @@ The beta phase will focus on:
 - performance and stability
 - preparing for the first stable release
 
-The current `v0.1.0-beta.1.0.3` build is specifically awaiting online multiplayer verification of active role abilities across meeting and round transitions.
+The current `v0.1.0-beta.2.0.0` source build particularly needs online multiplayer testing of custom role abilities before and after meetings, including host and non-host players and multiple consecutive rounds.
 
-If you encounter an issue, please report it through the repository's Issues page.
+If you encounter an issue, please report it through the repository's [Issues](../../issues) page. Include the affected role, what happened, whether you were host or client, and logs if available.
 
 ---
 
@@ -120,23 +120,13 @@ If you encounter an issue, please report it through the repository's Issues page
 
 TownOfNDev uses semantic-style versioning during development.
 
-Current release:
+Current source version:
 
 ```text
-v0.1.0-beta.1.0.3
-```
-
-Future beta builds will increment the beta suffix as fixes and improvements are made.
-
-Examples:
-
-```text
-v0.1.0-beta.1.0.4
-v0.1.0-beta.1.1.0
 v0.1.0-beta.2.0.0
 ```
 
-The first stable release will move out of beta once testing is complete.
+Future beta builds may increment the beta suffix as fixes and improvements are made. The first stable release will move out of beta once testing is complete.
 
 ---
 
